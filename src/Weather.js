@@ -1,42 +1,69 @@
-import React from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
+import WeatherInfo from "./WeatherInfo";
+import axios from "axios";
 import "./Weather.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function Weather() {
-    return <div className="Weather">
-        <form>
-            <div className="row">
+export default function Weather(props) {
+  const [weatherData, setWeatherData] = useState({ ready: false });
+  const [city, setCity] = useState(props.defaultCity);
+
+    function handleResponse(response) {
+        setWeatherData({
+            ready: true,
+            temperature: response.data.temperature.current,
+            humidity: response.data.temperature.humidity,
+            date: new Date(response.data.time * 1000),
+            description: response.data.condition.description,
+            iconUrl: "https://ssl.gstatic.com/onebox/weather/64/cloudy.png",
+            wind: response.data.wind.speed,
+            city: response.data.city,
+        });
+    }
+
+    function search() {
+        const apiKey = "134c0b4acf34377o900e12t15499b4ba";
+        let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=metric`;
+        axios.get(apiUrl).then(handleResponse);
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        search();
+    }
+
+    function handleCityChange(event) {
+        setCity(event.target.value);
+    }
+
+    if (weatherData.ready) {
+        return (
+          <div className="Weather">
+            <form onSubmit={handleSubmit}>
+              <div className="row">
                 <div className="col-9">
-            <input type="search" placeholder="Enter a city..." className="form-control" autoFocus="on" />
-            </div>
-            <div className="col-3">
-            <input type="submit" value="Search" className="btn btn-primary w-100" />
-            </div>
-            </div>
-        </form>
-        
-        <h1>Derby</h1>
-        <ul>
-            <li>Saturday 18:18</li>
-            <li>Cloudy</li>
-        </ul>
-        <div className="row mt-3">
-    <div className="col-6">
-        <div className="clearfix">
-            <img src="https://ssl.gstatic.com/onebox/weather/64/cloudy.png" alt="cloudy" className="float-left" />
-            <div className="float-left temperature-container">
-                <span className="temperature">13</span>
-                <span className="units">°C</span>
-            </div>
-    </div>
-</div>
-            <div className="col-6">
-            <ul>
-                <li>Precipitation: 15%</li>
-                <li>Humidity: 72%</li>
-                <li>Wind: 13 km/h</li>
-            </ul>
-            </div>
-        </div>
-        </div>;
+                  <input
+                    type="search"
+                    placeholder="Enter a city.."
+                    className="form-control"
+                    autoFocus="on"
+                    onChange={handleCityChange}
+                  />
+                </div>
+                <div className="col-3">
+                  <input
+                    type="submit"
+                    value="Search"
+                    className="btn btn-primary w-100"
+                  />
+                </div>
+              </div>
+            </form>
+            <WeatherInfo data={weatherData} />
+          </div>
+        );
+    } else {
+         search();
+        return "Loading...";
+    }
 }
