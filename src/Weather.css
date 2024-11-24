@@ -16,6 +16,10 @@ background: #5e63b6;
     background: #f5c7f7;
 }
 
+.Weather .btn:hover {
+background: #27296d;
+}
+
 .Weather h1 {
     font-size: 24px;
     font-weight: 100;
@@ -59,7 +63,7 @@ list-style: none;
     font-weight: 400;
 }
 
-.Weather .units {
+.celsius {
     color: #f5c7f7;
     font-size: 16px;
     font-weight: 400;
@@ -67,4 +71,9 @@ list-style: none;
     line-height: 1;
     top: -34px;
     margin-left: 0px;
+}
+
+.Weather a {
+    text-decoration: none;
+    color: #f5c7f7;
 }
